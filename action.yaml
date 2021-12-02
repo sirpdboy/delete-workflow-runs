@@ -23,6 +23,11 @@ inputs:
     required: true
     default: 6
 
+  delete_logs_only:
+    description: 'Remove the logs of the runs only'
+    required: false
+    default: false
+
 runs:
   using: 'node12'
   main: 'dist/index.js'
