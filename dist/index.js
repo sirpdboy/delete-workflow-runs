@@ -77,7 +77,7 @@ async function run() {
             owner: repo_owner,
             repo: repo_name,
             run_id: run_id
-        });
+          });
         } else {
           await octokit.actions.deleteWorkflowRun({
             owner: repo_owner,
