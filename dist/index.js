@@ -6,7 +6,7 @@ async function run() {
     const repository = core.getInput('repository');
     const retain_days = core.getInput('retain_days');
     const keep_minimum_runs = core.getInput('keep_minimum_runs');
-    const delete_logs_only = core.getInput('delete_logs_only');
+    const delete_logs_only = (core.getInput('delete_logs_only') === 'true');
 
     // Split the input 'repository' (format {owner}/{repo}) to be {owner} and {repo}
     const splitRepository = repository.split('/');
@@ -90,7 +90,7 @@ async function run() {
         console.log(`🚀 Delete workflow run ${run_id}`);
       }
 
-      console.log(`✅ ${arr_length} workflow runs are deleted.`);
+      console.log(`✅ ${arr_length} workflow runs/logs are deleted.`);
     }
   }
   catch (error) {
