@@ -6,6 +6,7 @@ async function run() {
     const repository = core.getInput('repository');
     const retain_days = core.getInput('retain_days');
     const keep_minimum_runs = core.getInput('keep_minimum_runs');
+    const delete_logs_only = core.getInput('delete_logs_only');
 
     // Split the input 'repository' (format {owner}/{repo}) to be {owner} and {repo}
     const splitRepository = repository.split('/');
@@ -71,12 +72,20 @@ async function run() {
         const run_id = del_runs[index];
 
         core.debug(`Deleting workflow run ${run_id}`);     
-
-        await octokit.actions.deleteWorkflowRun({
-          owner: repo_owner,
-          repo: repo_name,
-          run_id: run_id
+        if (delete_logs_only) {
+          await octokit.rest.actions.deleteWorkflowRunLogs({
+            owner: repo_owner,
+            repo: repo_name,
+            run_id: run_id
         });
+        } else {
+          await octokit.actions.deleteWorkflowRun({
+            owner: repo_owner,
+            repo: repo_name,
+            run_id: run_id
+          });
+        }
+
 
         console.log(`🚀 Delete workflow run ${run_id}`);
       }
