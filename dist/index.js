@@ -73,7 +73,7 @@ async function run() {
 
         core.debug(`Deleting workflow run ${run_id}`);     
         if (delete_logs_only) {
-          await octokit.rest.actions.deleteWorkflowRunLogs({
+          await octokit.actions.deleteWorkflowRunLogs({
             owner: repo_owner,
             repo: repo_name,
             run_id: run_id
