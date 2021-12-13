@@ -13,15 +13,15 @@ inputs:
     required: true
     default: ${{ github.repository }}
 
-  retain_days:
-    description: 'The number of days.'
+  retain_min:
+    description: 'The number of minutes.'
     required: true
-    default: 90
+    default: 60
 
   keep_minimum_runs:
     description: 'The minimum runs to keep for each workflow.'
     required: true
-    default: 6
+    default: 1
 
 runs:
   using: 'node12'

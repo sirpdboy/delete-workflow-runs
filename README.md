@@ -6,10 +6,10 @@ The GitHub action to delete workflow runs in a repository. This action (written 
 
 * [**Delete a workflow run**](https://docs.github.com/en/free-pro-team@latest/rest/reference/actions#delete-a-workflow-run) -- Delete a specific workflow run.
 
-The action will calculate the number of days that each workflow run has been retained so far, then use this number to compare with the number you specify for the input parameter "[**`retain_days`**](#3-retain_days)". If the retention days of the workflow run has reached (equal to or greater than) the specified number, the workflow run will be deleted.
+The action will calculate the number of minutes that each workflow run has been retained so far, then use this number to compare with the number you specify for the input parameter "[**`retain_min`**](#3-retain_min)". If the retention minutes of the workflow run has reached (equal to or greater than) the specified number, the workflow run will be deleted.
 
 ## What's new?
-* Add the input parameter "[**`keep_minimum_runs`**](#4-keep_minimum_runs)". Whit this input parameter, you can specify the number of the minimum runs to keep for each workflow. The specified number of latest runs will be kept for each workflow, even if some of the runs have reached the specified retention days.
+* Add the input parameter "[**`keep_minimum_runs`**](#4-keep_minimum_runs)". Whit this input parameter, you can specify the number of the minimum runs to keep for each workflow. The specified number of latest runs will be kept for each workflow, even if some of the runs have reached the specified retention minutes.
 
 * Optimize code to simplify the processes.
 ##
@@ -27,14 +27,14 @@ The token used to authenticate.
 #### Default: `${{ github.repository }}`
 The name of the repository where the workflow runs are on.
 
-### 3. `retain_days`
+### 3. `retain_min`
 #### Required: YES
-#### Default: 90
-The number of days that is used to compare with the retention days of each workflow.
+#### Default: 60
+The number of minutes that is used to compare with the retention minutes of each workflow.
 
 ### 4. `keep_minimum_runs`
 #### Required: YES
-#### Default: 6
+#### Default: 1
 The minimum runs to keep for each workflow.
 ##
 
@@ -53,39 +53,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete workflow runs
-        uses: Mattraks/delete-workflow-runs@main
+        uses: ActionsRML/delete-workflow-runs@main
         with:
           token: ${{ secrets.AUTH_PAT }}
           repository: ${{ github.repository }}
-          retain_days: 30
+          retain_min: 60
 ```
 
 ### In manual triggered workflow, see [workflow_dispatch event](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#workflow_dispatch).
 > In this way, you can manually trigger the workflow at any time to delete old workflow runs. <br/>
-![manual workflow](https://github.com/Mattraks/delete-workflow-runs/blob/main/img/example.PNG)
+![manual workflow](https://github.com/ActionsRML/delete-workflow-runs/blob/main/img/example.PNG)
 ```yaml
 name: Delete old workflow runs
 on:
   workflow_dispatch:
     inputs:
-      days:
-        description: 'Number of days.'
+      minutes:
+        description: 'Number of minutes.'
         required: true
-        default: 90
+        default: 60
 
 jobs:
   del_runs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete workflow runs
-        uses: Mattraks/delete-workflow-runs@main
+        uses: ActionsRML/delete-workflow-runs@main
         with:
           token: ${{ secrets.AUTH_PAT }}
           repository: ${{ github.repository }}
-          retain_days: ${{ github.event.inputs.days }}
+          retain_min: ${{ github.event.inputs.minutes }}
 ```
 ##
 
 ## License
-The scripts and documentation in this project are released under the [MIT License](https://github.com/Mattraks/delete-workflow-runs/blob/main/LICENSE).
+The scripts and documentation in this project are released under the [MIT License](https://github.com/ActionsRML/delete-workflow-runs/blob/main/LICENSE).
 ##

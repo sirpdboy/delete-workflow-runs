@@ -4,9 +4,9 @@ async function run() {
     // Fetch all the inputs
     const token = core.getInput('token');
     const repository = core.getInput('repository');
-    const retain_days = core.getInput('retain_days');
+    const retain_min = core.getInput('retain_min');
     const keep_minimum_runs = core.getInput('keep_minimum_runs');
-
+    
     // Split the input 'repository' (format {owner}/{repo}) to be {owner} and {repo}
     const splitRepository = repository.split('/');
     if (splitRepository.length !== 2 || !splitRepository[0] || !splitRepository[1]) {
@@ -29,33 +29,25 @@ async function run() {
         page: page_number
       });
       
-      const length = response.data.workflow_runs.length;
+      const lenght = response.data.workflow_runs.length;
       
-      if (length < 1) {
+      if (lenght < 1) {
         break;
       }
       else {
-        for (index = 0; index < length; index++) {
-
-          core.debug(`run id=${response.data.workflow_runs[index].id} status=${response.data.workflow_runs[index].status}`)
-
-          if(response.data.workflow_runs[index].status !== "completed") {
-            console.log(`👻 Skipped workflow run ${response.data.workflow_runs[index].id} is in ${response.data.workflow_runs[index].status} state`);
-            continue;            
-          }
-
+        for (index = 0; index < lenght; index++) {
           var created_at = new Date(response.data.workflow_runs[index].created_at);
           var current = new Date();
           var ELAPSE_ms = current.getTime() - created_at.getTime();
-          var ELAPSE_days = ELAPSE_ms / (1000 * 3600 * 24);
+          var ELAPSE_min = ELAPSE_ms / (1000 * 60);
           
-          if (ELAPSE_days >= retain_days) {
+          if (ELAPSE_min >= retain_min && response.data.workflow_runs[index].status=="completed") {
             del_runs.push(response.data.workflow_runs[index].id);
           }
         }
       }
       
-      if (length < 100) {
+      if (lenght < 100) {
         break;
       }
       page_number++;
@@ -69,9 +61,6 @@ async function run() {
       for (index = 0; index < arr_length; index++) {
         // Execute the API "Delete a workflow run", see 'https://octokit.github.io/rest.js/v18#actions-delete-workflow-run'
         const run_id = del_runs[index];
-
-        core.debug(`Deleting workflow run ${run_id}`);     
-
         await octokit.actions.deleteWorkflowRun({
           owner: repo_owner,
           repo: repo_name,
